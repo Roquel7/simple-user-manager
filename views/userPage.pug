@@ -12,7 +12,7 @@ html
                         p= user.email
                         form(action=`/removeUser/${user.id}`, method="post")
                             button(type="submit") Delete
-                        form(action="/editUser", method="get")
-                            button(type="submit") Edit
+                        a(href='/edit/' + user.full_name)
+                            button Edit
 
         a(href="/") Add Another Student

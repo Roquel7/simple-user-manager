@@ -44,7 +44,7 @@ app.set('view engine', 'pug')
 app.get('/', (req, res) => {
     res.render('index.pug', {
         title: 'User Manager',
-        subTitle: 'Adding Students'
+        subTitle: 'Adding Students',
 
     })
 })
@@ -77,16 +77,17 @@ app.get('/studentList', async (req, res) => {
 
 })
 
-app.get('/editUser', async (req, res) => {
+app.get('/edit:edit', async (req, res) => {
 
-    await User.find({}, (err, data) => {
-        console.log(data)
-        res.render('editUser.pug', {
-            users: data
-        })
-    })  
+    // await User.findOneAndUpdate({id: req.params.edit})
+
+    //     res.render('editUser.pug', {
+    //         users: data
+    //     })
+    res.end(`You clicked on ${req.params.edit}`)
 
 })
+
 
 
 
