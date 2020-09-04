@@ -1,59 +1,101 @@
 const express = require('express')
 const app = express()
+const path = require('path')
 const port = 4000
 const fs = require('fs')
-const studentList = fs.createReadStream('./data/students.json')
-// const newList = fs.createWriteStream('./data/newStudentList.json')
-let list = []
+const { v4: uuidv4 } = require('uuid')
+// const studentList = fs.createReadStream('./data/students.json')
 
-// class Student {
-//     super()
-//     this.
-// }
+
+
+const mongoose = require('mongoose');
+const dbConnectionString= 'mongodb://localhost:27017/userManager'; 
+mongoose.connect(dbConnectionString, {useNewUrlParser: true,useUnifiedTopology: true,}); 
+const db = mongoose.connection; //connecting to the Database
+
+
+const userSchema = new mongoose.Schema({
+
+    full_name: String,
+    id: mongoose.Mixed,
+    age: { type: Number, min: 1, max: 99 },
+    email: String,
+});
+
+const User = mongoose.model('Users', userSchema)
+
+db.on('error', (err) => {
+    console.log(err)
+})
+
+db.on('connecting', () => console.log('Connecting'))
+
+db.once('open', () => console.log('Connected, database is up'))
+
+
+
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
-app.use(express.static('public'))
 
-app.get('/listOfStudents', (req,res) => {
-   fs.createReadStream('data/students.json').pipe(res)
+app.set('views', './views')
+app.set('view engine', 'pug')
+
+app.get('/', (req, res) => {
+    res.render('index.pug', {
+        title: 'User Manager',
+        subTitle: 'Adding Students'
+
+    })
 })
 
-app.post('/addStudent', (req, res) => {
-    let user = 
-`{
-    "name": "${req.body.full_name}",
-    "id": "${Math.floor(Math.random() * 100)}",
-    "age": "${req.body.age}",
-    "email": "${req.body.email}"
-},`
+app.post('/addingStudent', (req, res) => {
 
-    // list.push(data)
+    let user = new User() 
+        user.full_name =  req.body.full_name;
+        user.id = uuidv4();
+        user.markModified('id');
+        user.age = req.body.age;
+        user.email = req.body.email;
+        user.save((err, data) => {
+            if(err) {
+                console.log(err)
+            } 
+            res.redirect('/studentList')
+        })
+})
 
-    res.send(user)
-
-    // console.log(user)
-    // let data = JSON.stringify(user, null, 2)
-    // console.log(data)
-
-    
-    // let finalList = JSON.stringify(list)
-    // studentList.pipe(newList)
-    // newList.write(data)
-
-    let info = require('./data/students.json')
-
-    info.push(user)
+app.get('/studentList', async (req, res) => {
 
 
-    fs.writeFile('./data/newStudentList.json', JSON.stringify(info), (err) => {
-        if (err) throw err;
-        
+    await User.find({}, (err, data) => {
+        console.log(data)
+        res.render('userPage.pug', {
+            users: data
+        })
     })
 
 })
 
+app.get('/editUser', async (req, res) => {
+
+    await User.find({}, (err, data) => {
+        console.log(data)
+        res.render('editUser.pug', {
+            users: data
+        })
+    })  
+
+})
+
+
+
+app.post('/removeUser/:delete', async (req, res) => {
+    await User.findOneAndDelete({ id: req.params.delete })
+    res.redirect('/studentList')
+})
+
 app.listen(port, err => {
     if (err) throw err;
-    console.log('Listening on port 3000')
+    console.log('Listening on port 4000')
 })
