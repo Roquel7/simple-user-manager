@@ -74,20 +74,34 @@ app.get('/studentList', async (req, res) => {
             users: data
         })
     })
+})
+
+app.get('/editUser/:edit', async (req, res) => {
+
+    await User.find({ id: req.params.edit }, (err, data) => {
+        res.render('editUser.pug', {
+            users: data
+        })
+        console.log(data)
+    })
 
 })
 
-app.get('/edit:edit', async (req, res) => {
+app.post('/editUser/:edit', async (req, res) => {
 
-    // await User.findOneAndUpdate({id: req.params.edit})
-
-    //     res.render('editUser.pug', {
-    //         users: data
-    //     })
-    res.end(`You clicked on ${req.params.edit}`)
-
+    const {full_name: newName, age: newAge, email: newEmail} = req.body
+    
+    await User.updateOne({id:req.params.edit}, {full_name: newName, age: newAge, email: newEmail})
+        .then(
+            (response) => {
+                console.log('update complete', response);
+            },
+            (reject) => {
+                console.log(reject)
+            }
+        );
+        res.redirect('/studentList')
 })
-
 
 
 

@@ -3,6 +3,16 @@ html
         title Edit User
     body
         div
-            p Hello
 
-            p= users.full_name
+            form(action=`/editUser/${users[0].id}`, method="post")
+                div
+                    label(for="full_name")= users[0].full_name
+                    input(type="text", name="full_name" value=users[0].full_name) 
+                div
+                    label(for="age")= users[0].age
+                    input(type="number", name="age" value=users[0].age)
+                div
+                    label(for="email")= users[0].email
+                    input(type="email", name="email" value=users[0].email)
+                button Submit
+        a(href="/studentList") Back to Student List
