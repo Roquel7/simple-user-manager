@@ -7,14 +7,12 @@ html
             table(border=1)
                 each user in users
                     td
-                        h3= user.full_name
-                        p= user.age
-                        p= user.email
+                        h3= `First Name: ${user.full_name}`
+                        p= `Age: ${user.age}`
+                        p= `Email: ${user.email}`
                         form(action=`/removeUser/${user.id}`, method="post")
                             button(type="submit") Delete
                         a(href=`/editUser/${user.id}`)
                             button Edit
-                        //- form(action=`/editUser/${user.full_name}`, method="get")
-                        //-     button(type="submit") Edit
 
         a(href="/") Add Another Student
