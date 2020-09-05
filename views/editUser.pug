@@ -6,8 +6,11 @@ html
 
             form(action=`/editUser/${users[0].id}`, method="post")
                 div
-                    label(for="full_name")= users[0].full_name
-                    input(type="text", name="full_name" value=users[0].full_name) 
+                    label(for="first_name")= users[0].first_name
+                    input(type="text", name="first_name" value=users[0].first_name) 
+                div
+                    label(for="last_name")= users[0].last_name
+                    input(type="text", name="last_name" value=users[0].last_name)
                 div
                     label(for="age")= users[0].age
                     input(type="number", name="age" value=users[0].age)
